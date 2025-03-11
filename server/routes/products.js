@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Product = require('../models/Product');
 const logger = require('../utils/logger');
+const { lookupProductByBarcode } = require('../utils/productLookupService');
 
 // Search products
 router.get('/search', async (req, res) => {
@@ -14,15 +15,8 @@ router.get('/search', async (req, res) => {
       });
     }
     
-    // Use text search with fallback to regex
-    const products = await Product.find({
-      $or: [
-        { $text: { $search: query } },
-        { product_name: { $regex: query, $options: 'i' } },
-        { brands: { $regex: query, $options: 'i' } },
-        { categories: { $regex: query, $options: 'i' } }
-      ]
-    }).limit(50);
+    // Use the new Product model's search method
+    const products = await Product.search(query, 50);
     
     logger.info(`Search query "${query}" returned ${products.length} results`);
     
@@ -47,16 +41,8 @@ router.get('/search/canadian', async (req, res) => {
       });
     }
     
-    // Use text search with fallback to regex, filtered for Canadian products
-    const products = await Product.find({
-      isCanadian: true,
-      $or: [
-        { $text: { $search: query } },
-        { product_name: { $regex: query, $options: 'i' } },
-        { brands: { $regex: query, $options: 'i' } },
-        { categories: { $regex: query, $options: 'i' } }
-      ]
-    }).limit(50);
+    // Use the new Product model's searchCanadian method
+    const products = await Product.searchCanadian(query, 50);
     
     logger.info(`Canadian search query "${query}" returned ${products.length} results`);
     
@@ -75,17 +61,23 @@ router.get('/:barcode', async (req, res) => {
   try {
     const { barcode } = req.params;
     
-    const product = await Product.findOne({ code: barcode });
+    // Use the new product lookup service that checks multiple databases
+    const result = await lookupProductByBarcode(barcode);
     
-    if (!product) {
+    if (!result.product) {
       return res.status(404).json({ 
-        error: 'Product not found' 
+        error: 'Product not found',
+        message: result.error || 'Product not found in any database'
       });
     }
     
-    logger.info(`Retrieved product with barcode ${barcode}`);
+    logger.info(`Retrieved product with barcode ${barcode} from ${result.source}`);
     
-    return res.json({ product });
+    return res.json({ 
+      product: result.product,
+      source: result.source,
+      isCanadian: result.isCanadian
+    });
   } catch (error) {
     logger.error(`Error getting product with barcode ${req.params.barcode}:`, error);
     return res.status(500).json({ 

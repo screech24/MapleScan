@@ -8,29 +8,34 @@ const logger = require('../utils/logger');
 router.get('/', async (req, res) => {
   try {
     // Get the status document or create it if it doesn't exist
-    let status = await DatabaseStatus.findOne({ key: 'main' });
+    let status = await DatabaseStatus.getMain();
     
     if (!status) {
       // Create initial status
-      status = new DatabaseStatus({ key: 'main' });
+      status = await DatabaseStatus.createInitial();
+      
+      if (!status) {
+        throw new Error('Failed to create initial database status');
+      }
       
       // Count products
-      const productCount = await Product.countDocuments();
-      const canadianProductCount = await Product.countDocuments({ isCanadian: true });
+      const productCount = await Product.count();
+      const canadianProductCount = await Product.countCanadian();
       
-      status.productCount = productCount;
-      status.canadianProductCount = canadianProductCount;
-      
-      await status.save();
+      // Update counts
+      status = await DatabaseStatus.update({
+        product_count: productCount,
+        canadian_product_count: canadianProductCount
+      });
     }
     
     logger.info('Database status retrieved');
     
     return res.json({
       status: status.status,
-      lastUpdate: status.lastUpdate,
-      productCount: status.productCount,
-      canadianProductCount: status.canadianProductCount,
+      lastUpdate: status.last_update,
+      productCount: status.product_count,
+      canadianProductCount: status.canadian_product_count,
       message: status.message
     });
   } catch (error) {

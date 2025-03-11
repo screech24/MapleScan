@@ -1,6 +1,5 @@
 require('dotenv').config();
 const axios = require('axios');
-const mongoose = require('mongoose');
 const Product = require('../models/Product');
 const DatabaseStatus = require('../models/DatabaseStatus');
 const logger = require('../utils/logger');
@@ -13,47 +12,20 @@ const api = axios.create({
   baseURL: OPEN_FOOD_FACTS_API,
 });
 
-// Connect to MongoDB if not already connected
-const connectDB = async () => {
-  if (mongoose.connection.readyState === 0) {
-    const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/maplescan';
-    
-    try {
-      await mongoose.connect(MONGODB_URI);
-      logger.info('Connected to MongoDB');
-    } catch (error) {
-      logger.error('Error connecting to MongoDB:', error.message);
-      throw error;
-    }
-  }
-};
-
 // Update database status
 const updateStatus = async (statusData) => {
   try {
-    let status = await DatabaseStatus.findOne({ key: 'main' });
-    
-    if (!status) {
-      status = new DatabaseStatus({ key: 'main' });
-    }
-    
-    // Update fields
-    Object.keys(statusData).forEach(key => {
-      status[key] = statusData[key];
-    });
-    
-    await status.save();
-    logger.info('Database status updated:', statusData);
+    return await DatabaseStatus.update(statusData);
   } catch (error) {
     logger.error('Error updating database status:', error);
+    return null;
   }
 };
 
-// Fetch Canadian products in batches
+// Fetch Canadian products from Open Food Facts
 const fetchCanadianProducts = async (page = 1, pageSize = 100) => {
   try {
-    logger.info(`Fetching Canadian products (page ${page})`);
-    const response = await api.get(`/search?countries=Canada&json=true&page=${page}&page_size=${pageSize}`);
+    const response = await api.get(`/search?countries_tags=en:canada&page=${page}&page_size=${pageSize}`);
     return response.data;
   } catch (error) {
     logger.error(`Error fetching Canadian products (page ${page}):`, error.message);
@@ -61,11 +33,10 @@ const fetchCanadianProducts = async (page = 1, pageSize = 100) => {
   }
 };
 
-// Fetch popular products in batches
+// Fetch popular products from Open Food Facts
 const fetchPopularProducts = async (page = 1, pageSize = 100) => {
   try {
-    logger.info(`Fetching popular products (page ${page})`);
-    const response = await api.get(`/search?sort_by=popularity&json=true&page=${page}&page_size=${pageSize}`);
+    const response = await api.get(`/search?sort_by=popularity&page=${page}&page_size=${pageSize}`);
     return response.data;
   } catch (error) {
     logger.error(`Error fetching popular products (page ${page}):`, error.message);
@@ -75,36 +46,42 @@ const fetchPopularProducts = async (page = 1, pageSize = 100) => {
 
 // Store products in the database
 const storeProducts = async (products) => {
-  if (!products || !Array.isArray(products) || products.length === 0) {
-    return 0;
-  }
-  
   let savedCount = 0;
   
   for (const product of products) {
-    if (!product || !product.code) continue;
-    
     try {
-      // Check if product already exists
-      const existingProduct = await Product.findOne({ code: product.code });
+      // Convert Open Food Facts product to our schema
+      const productData = {
+        barcode: product.code,
+        name: product.product_name || 'Unknown Product',
+        brand: product.brands || '',
+        image_url: product.image_url || '',
+        category: product.categories || '',
+        description: product.generic_name || '',
+        ingredients: product.ingredients_text || '',
+        is_canadian: false, // Will be determined below
+        canadian_factors: {
+          countries: product.countries && product.countries.toLowerCase().includes('canada'),
+          manufacturing: product.manufacturing_places && product.manufacturing_places.toLowerCase().includes('canada'),
+          origins: product.origins && product.origins.toLowerCase().includes('canada')
+        },
+        data_sources: {
+          source: 'open_food_facts',
+          last_updated: new Date().toISOString()
+        }
+      };
       
-      if (existingProduct) {
-        // Update existing product
-        Object.keys(product).forEach(key => {
-          existingProduct[key] = product[key];
-        });
-        
-        existingProduct.lastUpdated = new Date();
-        await existingProduct.save();
-      } else {
-        // Create new product
-        const newProduct = new Product(product);
-        await newProduct.save();
+      // Determine if product is Canadian
+      productData.is_canadian = Object.values(productData.canadian_factors).some(value => value === true);
+      
+      // Save product to database
+      const savedProduct = await Product.createOrUpdate(productData);
+      
+      if (savedProduct) {
+        savedCount++;
       }
-      
-      savedCount++;
     } catch (error) {
-      logger.error(`Error saving product ${product.code}:`, error.message);
+      logger.error(`Error storing product ${product.code}:`, error.message);
     }
   }
   
@@ -114,8 +91,6 @@ const storeProducts = async (products) => {
 // Main sync function
 const syncDatabase = async () => {
   try {
-    await connectDB();
-    
     // Update status to 'updating'
     await updateStatus({
       status: 'updating',
@@ -167,15 +142,15 @@ const syncDatabase = async () => {
     const savedCount = await storeProducts(allProducts);
     
     // Count products
-    const productCount = await Product.countDocuments();
-    const canadianProductCount = await Product.countDocuments({ isCanadian: true });
+    const productCount = await Product.count();
+    const canadianProductCount = await Product.countCanadian();
     
     // Update status to 'ok'
     await updateStatus({
       status: 'ok',
-      lastUpdate: new Date(),
-      productCount,
-      canadianProductCount,
+      last_update: new Date().toISOString(),
+      product_count: productCount,
+      canadian_product_count: canadianProductCount,
       message: `Successfully synced ${savedCount} products`
     });
     
@@ -195,15 +170,15 @@ const syncDatabase = async () => {
   }
 };
 
-// If script is run directly, execute sync
+// Run the sync if this script is executed directly
 if (require.main === module) {
   syncDatabase()
     .then(() => {
-      logger.info('Sync script completed');
+      logger.info('Sync completed');
       process.exit(0);
     })
-    .catch(error => {
-      logger.error('Sync script failed:', error);
+    .catch((error) => {
+      logger.error('Sync failed:', error);
       process.exit(1);
     });
 }

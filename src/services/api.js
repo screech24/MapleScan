@@ -4,7 +4,7 @@ import axios from 'axios';
 const OPEN_FOOD_FACTS_API = 'https://world.openfoodfacts.org/api/v0';
 
 // Base URL for our backend API (to be deployed)
-const BACKEND_API = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000/api';
+const BACKEND_API = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5001/api';
 
 // Create axios instance for Open Food Facts API
 const openFoodApi = axios.create({
