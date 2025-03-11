@@ -2,7 +2,7 @@
 
 A React app to help users find Canadian-made products, with features for searching, barcode scanning, and image recognition to check product origins.
 
-**Current Version:** 0.2.0 - See [CHANGELOG.md](CHANGELOG.md) for version history
+**Current Version:** 0.3.1 - See [CHANGELOG.md](CHANGELOG.md) for version history
 
 ## Features
 
