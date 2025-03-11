@@ -7,10 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.3.1] - 2025-03-11
 
+### Added
+- Integrated multiple new data sources for product information
+- Added Google Custom Search API integration for enhanced product lookups
+- Implemented multi-database product lookup service
+- Added web search fallback for products not found in databases
+
 ### Fixed
 - Resolved terminal errors and build issues
 - Fixed application startup problems
 - Improved application stability
+
+### Changed
+- Enhanced Product model with new fields for data source tracking
+- Improved product information accuracy with multiple data sources
+- Updated product lookup logic to prioritize Canadian product information
 
 ## [0.3.0] - 2025-03-11
 

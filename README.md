@@ -11,6 +11,18 @@ A React app to help users find Canadian-made products, with features for searchi
 - Take pictures of products for identification
 - Dark mode support
 - Server-side database with nightly updates
+- Multi-database product lookup system
+- Web search integration for enhanced product information
+- Improved accuracy with multiple data sources
+
+## Data Sources
+
+MapleScan uses multiple data sources to provide comprehensive product information:
+
+1. **Open Food Facts** - Primary open database for food products
+2. **UPC Database** - Additional barcode lookup service
+3. **Go-UPC API** - Enhanced product information service
+4. **Google Custom Search** - Web search fallback for products not found in databases
 
 ## Project Structure
 
@@ -113,6 +125,13 @@ See [CHANGELOG.md](CHANGELOG.md) for a detailed version history.
 - Mongoose
 - Node-cron
 - Winston (logging)
+
+### APIs and Services
+- Open Food Facts API
+- UPC Database API
+- Go-UPC API
+- Google Custom Search API
+- Supabase
 
 ## License
 
