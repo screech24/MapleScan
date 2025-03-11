@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/MapleScan/static/css/main.41ab8782.css",
-    "main.js": "/MapleScan/static/js/main.45cbed91.js",
+    "main.css": "/MapleScan/static/css/main.33308a9a.css",
+    "main.js": "/MapleScan/static/js/main.9ce70b4a.js",
     "static/js/453.2d8f27f4.chunk.js": "/MapleScan/static/js/453.2d8f27f4.chunk.js",
     "index.html": "/MapleScan/index.html",
-    "main.41ab8782.css.map": "/MapleScan/static/css/main.41ab8782.css.map",
-    "main.45cbed91.js.map": "/MapleScan/static/js/main.45cbed91.js.map",
+    "main.33308a9a.css.map": "/MapleScan/static/css/main.33308a9a.css.map",
+    "main.9ce70b4a.js.map": "/MapleScan/static/js/main.9ce70b4a.js.map",
     "453.2d8f27f4.chunk.js.map": "/MapleScan/static/js/453.2d8f27f4.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.41ab8782.css",
-    "static/js/main.45cbed91.js"
+    "static/css/main.33308a9a.css",
+    "static/js/main.9ce70b4a.js"
   ]
 }
