@@ -7,9 +7,37 @@
     <meta name="theme-color" content="#000000" />
     <meta
       name="description"
-      content="Web site created using create-react-app"
+      content="Find and support Canadian-made products"
     />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+    <!-- Script to apply dark mode immediately on page load -->
+    <script>
+      // Use a consistent key for dark mode
+      const DARK_MODE_KEY = 'mapleScan_darkMode';
+      
+      // Simple function to get dark mode preference
+      function getDarkMode() {
+        try {
+          const value = localStorage.getItem(DARK_MODE_KEY);
+          if (value !== null) {
+            return JSON.parse(value);
+          } else {
+            return window.matchMedia('(prefers-color-scheme: dark)').matches;
+          }
+        } catch (e) {
+          console.error('Error getting dark mode preference:', e);
+          return false;
+        }
+      }
+      
+      // Apply dark mode immediately
+      const isDarkMode = getDarkMode();
+      if (isDarkMode) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    </script>
     <!--
       manifest.json provides metadata used when your web app is installed on a
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
@@ -24,7 +52,7 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-    <title>React App</title>
+    <title>MapleScan - Canadian Product Finder</title>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>

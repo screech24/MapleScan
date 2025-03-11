@@ -3,6 +3,10 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { initDarkMode } from './utils/darkMode';
+
+// Initialize dark mode as early as possible
+initDarkMode();
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

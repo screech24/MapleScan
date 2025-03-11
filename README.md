@@ -1,70 +1,119 @@
-# Getting Started with Create React App
+# MapleScan
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A React app to help users find Canadian-made products, with features for searching, barcode scanning, and image recognition to check product origins.
 
-## Available Scripts
+**Current Version:** 0.2.0 - See [CHANGELOG.md](CHANGELOG.md) for version history
 
-In the project directory, you can run:
+## Features
 
-### `npm start`
+- Search for products and find Canadian-made alternatives
+- Scan barcodes to check if products are made in Canada
+- Take pictures of products for identification
+- Dark mode support
+- Server-side database with nightly updates
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Project Structure
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+This project consists of two main parts:
 
-### `npm test`
+1. **React Frontend**: The user interface built with React, Tailwind CSS, and various libraries for barcode scanning and image recognition.
+2. **Node.js Backend**: A server that provides API endpoints and maintains a MongoDB database of products.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Setup
 
-### `npm run build`
+### Prerequisites
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- Node.js (v14 or higher)
+- MongoDB (for the backend)
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Frontend Setup
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+1. Install dependencies:
+   ```
+   cd maplescan
+   npm install
+   ```
 
-### `npm run eject`
+2. Create a `.env` file:
+   ```
+   cp .env.example .env
+   ```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+3. Start the development server:
+   ```
+   npm start
+   ```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Backend Setup
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+1. Install dependencies:
+   ```
+   cd maplescan/server
+   npm install
+   ```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+2. Create a `.env` file:
+   ```
+   cp .env.example .env
+   ```
 
-## Learn More
+3. Update the MongoDB connection string in the `.env` file.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+4. Start the development server:
+   ```
+   npm run dev
+   ```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+5. Sync the database:
+   ```
+   npm run sync
+   ```
 
-### Code Splitting
+## Deployment
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+### Frontend
 
-### Analyzing the Bundle Size
+The frontend can be deployed to GitHub Pages:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+```
+npm run deploy
+```
 
-### Making a Progressive Web App
+This will build the application and deploy it to GitHub Pages at https://screech24.github.io/MapleScan
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+Alternatively, you can deploy to services like Netlify or Vercel:
 
-### Advanced Configuration
+```
+npm run build
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+### Backend
 
-### Deployment
+The backend can be deployed to services like Render, Heroku, or DigitalOcean. See the backend README for more details.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+## Version History
 
-### `npm run build` fails to minify
+See [CHANGELOG.md](CHANGELOG.md) for a detailed version history.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## Technologies Used
+
+### Frontend
+- React
+- Tailwind CSS
+- React Router
+- Axios
+- React Webcam
+- Quagga (barcode scanning)
+- Tesseract.js (OCR)
+
+### Backend
+- Node.js
+- Express
+- MongoDB
+- Mongoose
+- Node-cron
+- Winston (logging)
+
+## License
+
+MIT
