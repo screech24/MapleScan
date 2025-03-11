@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/MapleScan/static/css/main.41ab8782.css",
+    "main.js": "/MapleScan/static/js/main.ed57e202.js",
+    "static/js/453.2d8f27f4.chunk.js": "/MapleScan/static/js/453.2d8f27f4.chunk.js",
+    "index.html": "/MapleScan/index.html",
+    "main.41ab8782.css.map": "/MapleScan/static/css/main.41ab8782.css.map",
+    "main.ed57e202.js.map": "/MapleScan/static/js/main.ed57e202.js.map",
+    "453.2d8f27f4.chunk.js.map": "/MapleScan/static/js/453.2d8f27f4.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.41ab8782.css",
+    "static/js/main.ed57e202.js"
+  ]
+}
